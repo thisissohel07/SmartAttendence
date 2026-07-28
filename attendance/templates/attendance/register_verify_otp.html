@@ -1,0 +1,42 @@
+{% extends 'attendance/base.html' %}
+
+{% block title %}Verify Email OTP | Smart Attendance{% endblock %}
+
+{% block content %}
+<div class="container py-4 animate-fade-in">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6 col-lg-5">
+            <div class="glass-card p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <i class="bi bi-shield-lock-fill fs-3"></i>
+                    </div>
+                    <h4 class="fw-bold">Verify OTP Code</h4>
+                    <p class="text-secondary small">Step 2 of 3: Enter 6-digit code sent to <br><strong class="text-body">{{ email }}</strong></p>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">One-Time Password (OTP)</label>
+                        {{ form.otp }}
+                        <small class="text-muted d-block mt-2 text-center">Expires in <strong>5 minutes</strong></small>
+                        {% if form.otp.errors %}
+                            <div class="text-danger small text-center mt-1">{{ form.otp.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn-gradient-primary w-100 py-3 fw-bold fs-6 mb-3">
+                        Verify & Proceed to Face Enrollment <i class="bi bi-check-circle-fill ms-1"></i>
+                    </button>
+                </form>
+
+                <div class="text-center mt-3">
+                    <a href="{% url 'register_step1' %}" class="text-secondary small text-decoration-none">&larr; Change email or edit details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

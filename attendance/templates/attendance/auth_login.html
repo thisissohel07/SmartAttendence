@@ -1,0 +1,42 @@
+{% extends 'attendance/base.html' %}
+
+{% block title %}Passwordless Student Login | Smart Attendance{% endblock %}
+
+{% block content %}
+<div class="container py-4 animate-fade-in">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6 col-lg-5">
+            <div class="glass-card p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <i class="bi bi-box-arrow-in-right fs-3"></i>
+                    </div>
+                    <h4 class="fw-bold">Passwordless Login</h4>
+                    <p class="text-secondary small">Enter your registered email to receive a secure OTP code.</p>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Gmail Email Address</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn-gradient-primary w-100 py-3 fw-bold fs-6 mb-3">
+                        Send Login OTP <i class="bi bi-envelope-paper-fill ms-1"></i>
+                    </button>
+                </form>
+
+                <div class="text-center mt-3">
+                    <span class="text-secondary small">New student? </span>
+                    <a href="{% url 'register_step1' %}" class="fw-bold text-primary text-decoration-none">Register here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

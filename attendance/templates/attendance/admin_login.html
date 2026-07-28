@@ -1,0 +1,53 @@
+{% extends 'attendance/base.html' %}
+
+{% block title %}Admin Control Panel Login | Smart Attendance{% endblock %}
+
+{% block content %}
+<div class="container py-4 animate-fade-in">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6 col-lg-5">
+            <div class="glass-card p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="bg-warning text-dark rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 64px; height: 64px;">
+                        <i class="bi bi-shield-lock-fill fs-2"></i>
+                    </div>
+                    <h4 class="fw-bold">Admin Control Panel Login</h4>
+                    <p class="text-secondary small">Faculty & Administrator access portal.</p>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Admin Username</label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Password</label>
+                        {{ form.password }}
+                        {% if form.password.errors %}
+                            <div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn-warning w-100 py-3 fw-bold fs-6 text-dark mb-3">
+                        Login to Admin Dashboard <i class="bi bi-box-arrow-in-right ms-1"></i>
+                    </button>
+                </form>
+
+                <div class="bg-light bg-opacity-75 p-3 rounded-3 border text-center small text-secondary mt-3">
+                    <i class="bi bi-info-circle me-1 text-primary"></i> Superuser Credentials: <strong>admin</strong> / <strong>admin123</strong>
+                </div>
+
+                <div class="text-center mt-3">
+                    <a href="{% url 'auth_login' %}" class="text-secondary small text-decoration-none">&larr; Switch to Student Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

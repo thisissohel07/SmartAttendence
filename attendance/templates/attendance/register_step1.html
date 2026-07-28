@@ -1,0 +1,70 @@
+{% extends 'attendance/base.html' %}
+
+{% block title %}Student Registration - Step 1 | Smart Attendance{% endblock %}
+
+{% block content %}
+<div class="container py-4 animate-fade-in">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="glass-card p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                        style="width: 60px; height: 60px;">
+                        <i class="bi bi-person-plus-fill fs-3"></i>
+                    </div>
+                    <h4 class="fw-bold">Student Registration</h4>
+                    <p class="text-secondary small">Step 1 of 3: Enter your academic details to receive OTP
+                        verification.</p>
+                </div>
+
+                <form method="POST" novalidate>
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Full Name</label>
+                        {{ form.full_name }}
+                        {% if form.full_name.errors %}
+                        <div class="text-danger small mt-1">{{ form.full_name.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Roll Number</label>
+                        {{ form.roll_number }}
+                        <small class="text-muted d-block mt-1">Format: <strong>2XWJXAXXXX</strong> </small>
+                        {% if form.roll_number.errors %}
+                        <div class="text-danger small mt-1">{{ form.roll_number.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Gmail Email Address</label>
+                        {{ form.email }}
+                        <small class="text-muted">An OTP code will be sent to this email.</small>
+                        {% if form.email.errors %}
+                        <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Department</label>
+                        {{ form.department }}
+                        {% if form.department.errors %}
+                        <div class="text-danger small mt-1">{{ form.department.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn-gradient-primary w-100 py-3 fw-bold fs-6">
+                        Send Verification OTP <i class="bi bi-arrow-right ms-1"></i>
+                    </button>
+                </form>
+
+                <div class="text-center mt-4">
+                    <span class="text-secondary small">Already registered? </span>
+                    <a href="{% url 'auth_login' %}" class="fw-bold text-primary text-decoration-none">Login here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

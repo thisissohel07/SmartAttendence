@@ -1,0 +1,105 @@
+{% extends 'attendance/base.html' %}
+
+{% block title %}Smart Attendance System | Secure Biometric & GPS Portal{% endblock %}
+
+{% block content %}
+<div class="container py-4 animate-fade-in">
+    <!-- Hero Section -->
+    <div class="text-center my-4 my-md-5">
+        <div class="d-inline-flex align-items-center gap-2 bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-semibold small mb-3 border border-primary border-opacity-25">
+            <i class="bi bi-shield-check fs-6"></i> Biometric Recognition & GPS Geofencing
+        </div>
+        <h1 class="display-4 fw-extrabold text-primary mb-3">Smart Attendance Management System</h1>
+        <p class="lead text-secondary mx-auto mb-4" style="max-width: 680px;">
+            Production-quality attendance platform powered by OpenCV LBPH Face Recognition and HTML5 Geolocation verification.
+        </p>
+
+        <!-- Action Cards: STUDENT PORTAL vs ADMIN PORTAL -->
+        <div class="row justify-content-center g-4 my-4">
+            <!-- Student Login Card -->
+            <div class="col-12 col-md-4">
+                <div class="glass-card p-4 text-center h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 64px; height: 64px;">
+                            <i class="bi bi-box-arrow-in-right fs-3"></i>
+                        </div>
+                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-1 mb-2 rounded-pill fw-semibold">Student Portal</span>
+                        <h5 class="fw-bold mb-2">Student Login</h5>
+                        <p class="text-secondary small mb-3">Passwordless email OTP authentication for enrolled students.</p>
+                    </div>
+                    <a href="{% url 'auth_login' %}" class="btn btn-gradient-primary w-100 py-2.5 fw-bold">
+                        Login with OTP <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Student Registration Card -->
+            <div class="col-12 col-md-4">
+                <div class="glass-card p-4 text-center h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 64px; height: 64px;">
+                            <i class="bi bi-person-plus-fill fs-3"></i>
+                        </div>
+                        <span class="badge bg-success bg-opacity-10 text-success px-3 py-1 mb-2 rounded-pill fw-semibold">Student Portal</span>
+                        <h5 class="fw-bold mb-2">Student Registration</h5>
+                        <p class="text-secondary small mb-3">First-time registration via email OTP & live webcam face scanning.</p>
+                    </div>
+                    <a href="{% url 'register_step1' %}" class="btn btn-gradient-success w-100 py-2.5 fw-bold">
+                        Register Account <i class="bi bi-camera-video-fill ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Admin / Faculty Portal Card -->
+            <div class="col-12 col-md-4">
+                <div class="glass-card p-4 text-center h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="bg-warning text-dark rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 64px; height: 64px;">
+                            <i class="bi bi-shield-lock-fill fs-3"></i>
+                        </div>
+                        <span class="badge bg-warning bg-opacity-10 text-dark px-3 py-1 mb-2 rounded-pill fw-semibold">Admin / Faculty Portal</span>
+                        <h5 class="fw-bold mb-2">Admin Control Panel</h5>
+                        <p class="text-secondary small mb-3">College-wide department analytics, student search, and Excel/PDF reports.</p>
+                    </div>
+                    <a href="{% url 'admin_login' %}" class="btn btn-warning w-100 py-2.5 fw-bold text-dark">
+                        Admin Login / Dashboard <i class="bi bi-gear-fill ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature Cards Section -->
+    <div class="row g-4 mt-2">
+        <div class="col-12 col-md-4">
+            <div class="glass-card p-4 text-center h-100">
+                <div class="text-primary mb-3">
+                    <i class="bi bi-person-bounding-box fs-1"></i>
+                </div>
+                <h6 class="fw-bold mb-2">LBPH Face Recognition</h6>
+                <p class="text-secondary small mb-0">OpenCV powered biometric matching with single-face enforcement and anti-spoofing protection.</p>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="glass-card p-4 text-center h-100">
+                <div class="text-success mb-3">
+                    <i class="bi bi-geo-alt-fill fs-1"></i>
+                </div>
+                <h6 class="fw-bold mb-2">GPS Campus Geofencing</h6>
+                <p class="text-secondary small mb-0">Haversine formula location validation ensures attendance is submitted inside campus boundaries.</p>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="glass-card p-4 text-center h-100">
+                <div class="text-danger mb-3">
+                    <i class="bi bi-envelope-check-fill fs-1"></i>
+                </div>
+                <h6 class="fw-bold mb-2">Automated Notifications</h6>
+                <p class="text-secondary small mb-0">Instant Gmail SMTP OTPs for authentication and early exit alert notifications sent to department HODs.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

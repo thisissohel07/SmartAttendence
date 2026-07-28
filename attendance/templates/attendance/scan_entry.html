@@ -1,0 +1,181 @@
+{% extends 'attendance/base.html' %}
+
+{% block title %}Scan Entry Attendance | Smart Attendance{% endblock %}
+
+{% block content %}
+<div class="container py-4 animate-fade-in">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="glass-card p-4">
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+                    <div>
+                        <h4 class="fw-bold text-primary mb-1"><i class="bi bi-camera-fill me-2"></i>Entry Attendance Scanner</h4>
+                        <p class="text-secondary small mb-0">Live Biometric Recognition & GPS Campus Verification</p>
+                    </div>
+                    <div id="gpsBadge" class="badge bg-secondary bg-opacity-10 text-body p-2 px-3 rounded-pill border">
+                        <i class="bi bi-geo-alt-fill text-danger me-1"></i> <span id="gpsText">Acquiring GPS location...</span>
+                    </div>
+                </div>
+
+                {% if already_completed %}
+                <div class="alert alert-success border-0 rounded-3 py-4 px-4 mb-4 d-flex align-items-center gap-3 shadow-sm">
+                    <i class="bi bi-check-circle-fill fs-1 text-success"></i>
+                    <div>
+                        <h5 class="fw-bold mb-1">Today's Entry is Completed!</h5>
+                        <p class="mb-0">You have already marked your entry attendance for today at <strong>{{ completed_time_str }}</strong>.</p>
+                    </div>
+                </div>
+                {% else %}
+                <!-- Alert Feedback Box -->
+                <div id="scanAlert" class="alert alert-info border-0 rounded-3 py-3 px-4 mb-4 small d-flex align-items-center gap-3">
+                    <i class="bi bi-info-circle-fill fs-4 text-info"></i>
+                    <div>
+                        <strong class="d-block">Ready to Scan</strong>
+                        <span>Ensure your face is lit clearly and camera/location permissions are granted.</span>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="row g-4 align-items-center">
+                    <!-- Video Viewfinder -->
+                    <div class="col-12 col-md-7 text-center">
+                        <div class="scanner-viewport">
+                            <video id="webcamVideo" class="scanner-video" autoplay playsinline muted></video>
+                            <div class="scan-pulse-ring"></div>
+                        </div>
+                    </div>
+
+                    <!-- Side Stats & Scan Button -->
+                    <div class="col-12 col-md-5">
+                        <div class="bg-light bg-opacity-50 p-3 rounded-3 border mb-3">
+                            <div class="d-flex justify-content-between small text-secondary mb-1">
+                                <span>College Opening:</span>
+                                <strong class="text-body">{{ campus_config.college_start_time|time:"h:i A" }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between small text-secondary mb-1">
+                                <span>Allowed Radius:</span>
+                                <strong class="text-body">{{ campus_config.radius_meters }} meters</strong>
+                            </div>
+                            <div class="d-flex justify-content-between small text-secondary">
+                                <span>Verification:</span>
+                                <strong class="text-success">Biometric + GPS</strong>
+                            </div>
+                        </div>
+
+                        <button id="scanEntryBtn" class="btn btn-gradient-success w-100 py-3 fw-bold fs-6 mb-2" disabled>
+                            <i class="bi bi-person-check-fill me-1"></i> Mark Entry Attendance
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Result Card (Hidden by default) -->
+                <div id="resultCard" class="card border-0 bg-success bg-opacity-10 rounded-3 p-3 mt-4 d-none animate-fade-in">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-success text-white rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                            <i class="bi bi-check-lg fs-3"></i>
+                        </div>
+                        <div>
+                            <h6 id="resStudentName" class="fw-bold mb-0 text-success">Student Name</h6>
+                            <span id="resRollNumber" class="small text-secondary font-monospace">Roll No</span>
+                            <div id="resDetails" class="small fw-semibold mt-1">Status: PRESENT</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    const video = document.getElementById('webcamVideo');
+    const scanBtn = document.getElementById('scanEntryBtn');
+    const scanAlert = document.getElementById('scanAlert');
+    const gpsBadge = document.getElementById('gpsBadge');
+    const gpsText = document.getElementById('gpsText');
+
+    const resultCard = document.getElementById('resultCard');
+    const resStudentName = document.getElementById('resStudentName');
+    const resRollNumber = document.getElementById('resRollNumber');
+    const resDetails = document.getElementById('resDetails');
+
+    let userCoords = null;
+
+    // 1. Fetch GPS Location
+    try {
+        userCoords = await getGeolocation();
+        gpsText.innerText = `GPS Active (${userCoords.latitude.toFixed(4)}, ${userCoords.longitude.toFixed(4)})`;
+        gpsBadge.className = 'badge bg-success bg-opacity-10 text-success p-2 px-3 rounded-pill border border-success';
+    } catch (err) {
+        gpsText.innerText = 'GPS Unavailable';
+        gpsBadge.className = 'badge bg-danger bg-opacity-10 text-danger p-2 px-3 rounded-pill border border-danger';
+        scanAlert.className = 'alert alert-warning border-0 rounded-3 py-3 px-4 mb-4 small';
+        scanAlert.innerHTML = `<i class="bi bi-exclamation-triangle-fill fs-4 text-warning"></i><div><strong>GPS Error</strong><span>${err.message}</span></div>`;
+    }
+
+    // 2. Start Webcam
+    const cameraStarted = await startWebcamStream(video);
+    if (cameraStarted) {
+        scanBtn.disabled = false;
+    } else {
+        scanAlert.className = 'alert alert-danger border-0 rounded-3 py-3 px-4 mb-4 small';
+        scanAlert.innerHTML = '<i class="bi bi-camera-video-off-fill fs-4 text-danger"></i><div><strong>Camera Error</strong><span>Unable to access webcam.</span></div>';
+    }
+
+    // 3. Handle Scan Button Click
+    scanBtn.addEventListener('click', async () => {
+        scanBtn.disabled = true;
+        scanBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Verifying Face & GPS...';
+        resultCard.classList.add('d-none');
+
+        try {
+            // Re-check coords if missing
+            if (!userCoords) {
+                userCoords = await getGeolocation();
+            }
+
+            const imageBase64 = captureFrameAsBase64(video);
+
+            const response = await fetch("{% url 'scan_entry' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken()
+                },
+                body: JSON.stringify({
+                    image: imageBase64,
+                    latitude: userCoords.latitude,
+                    longitude: userCoords.longitude
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                scanAlert.className = 'alert alert-success border-0 rounded-3 py-3 px-4 mb-4 small';
+                scanAlert.innerHTML = `<i class="bi bi-check-circle-fill fs-4 text-success"></i><div><strong>Attendance Allowed</strong><span>${result.message}</span></div>`;
+                showToastMessage(result.message, 'success');
+
+                resStudentName.innerText = result.student_name;
+                resRollNumber.innerText = `Roll No: ${result.roll_number}`;
+                resDetails.innerText = `Status: ${result.status} | Entry Time: ${result.time}`;
+                resultCard.classList.remove('d-none');
+            } else {
+                scanAlert.className = 'alert alert-danger border-0 rounded-3 py-3 px-4 mb-4 small';
+                scanAlert.innerHTML = `<i class="bi bi-x-circle-fill fs-4 text-danger"></i><div><strong>Attendance Denied</strong><span>${result.message}</span></div>`;
+                showToastMessage(result.message, 'danger');
+            }
+        } catch (err) {
+            scanAlert.className = 'alert alert-danger border-0 rounded-3 py-3 px-4 mb-4 small';
+            scanAlert.innerHTML = `<i class="bi bi-exclamation-triangle-fill fs-4 text-danger"></i><div><strong>Scan Error</strong><span>${err.message}</span></div>`;
+            showToastMessage(err.message, 'danger');
+        } finally {
+            scanBtn.disabled = false;
+            scanBtn.innerHTML = '<i class="bi bi-person-check-fill me-1"></i> Mark Entry Attendance';
+        }
+    });
+});
+</script>
+{% endblock %}
