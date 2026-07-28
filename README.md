@@ -55,7 +55,3 @@ A production-quality Smart Attendance Management System using Django, HTML5 Geol
    ```
    Access application at `http://127.0.0.1:8000/`.
 
-5. **Django Admin Credentials**:
-   - Username: `admin`
-   - Password: `admin123`
-   - Admin Panel URL: `http://127.0.0.1:8000/admin/`
