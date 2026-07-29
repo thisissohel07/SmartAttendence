@@ -20,4 +20,4 @@ RUN python manage.py collectstatic --no-input
 
 EXPOSE 8000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "smart_attendance.wsgi:application"]
+CMD ["sh", "-c", "python manage.py migrate && python manage.py seed_data && gunicorn --bind 0.0.0.0:8000 smart_attendance.wsgi:application"]
