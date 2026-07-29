@@ -1,6 +1,10 @@
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: smart-attendance:latest
+    container_name: smart_attendance_web
     ports:
       - "8000:8000"
     environment:
