@@ -2,7 +2,7 @@ services:
   - type: web
     name: smart-attendance
     env: python
-    buildCommand: "./build.sh"
+    buildCommand: "chmod +x build.sh && ./build.sh"
     startCommand: "gunicorn smart_attendance.wsgi:application"
     envVars:
       - key: DATABASE_URL
