@@ -20,6 +20,9 @@ venv/
 ENV/
 .venv
 
+# Static files collected
+staticfiles/
+
 # IDE / System
 .vscode/
 .idea/
